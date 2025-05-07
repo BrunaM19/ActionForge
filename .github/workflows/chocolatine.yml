@@ -1,0 +1,106 @@
+name: Chocolatine
+
+on:
+  push:
+    branches-ignore:
+      - ga-ignore-*
+  pull_request:
+    branches-ignore:
+      - ga-ignore-*
+
+env:
+  MIRROR_URL: "git@github.com:BrunaM19/chocolatinos.git"
+  EXECUTABLES: "my_executable another_exec"
+
+jobs:
+  check_coding_style:
+    name: Check Coding Style
+    runs-on: ubuntu-latest
+    container: ghcr.io/epitech/coding-style-checker:latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run Coding Style Checker
+        run: |
+          DELIVERY_DIR='.'
+          REPORTS_DIR='.'
+          docker run --rm --securtiy-opt "label:disable" -i \
+            -v "$DELIVERY_DIR:/mnt/delivery" \
+            -v "$REPORTS_DIR:/mnt/reports" \
+            ghcr.io/epitech/coding-style-checker:latest "/mnt/delivery" "/mnt/reports"
+      
+      - name: Display Coding Style Errors
+        run: |
+          if [ -s coding-style-reports.log ]; then
+            cat coding-style-reports.log
+            exit 1
+          fi
+
+  check_program_compilation:
+    name: Check Program Compilation
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Compile the Program
+        run: timeout 120 make
+      
+      - name: Clean Compilation Artifacts
+        run: make clean
+      
+      - name: Verify Executables
+        run: |
+          IFS=' ' read -r -a files <<< "$EXECUTABLES"
+          for file in "${files[@]}"; do
+            if [ ! -x "$file" ]; then
+              echo "::error file=$file::Executable $file is missing or not executable"
+              exit 1
+            fi
+          done
+
+  run_tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    container:
+      image: epitechcontent/epitest-docker
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Run Tests
+        run: timeout 120 make tests_run
+
+  push_to_mirror:
+    name: Push to Mirror Repository
+    runs-on: ubuntu-latest
+    needs: [run_tests]
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH KEY
+        run: |
+          mkdir -p ~/.ssh
+          chmod 600 ~/.ssh/id_rsa
+          MIRROR_HOST=$(echo "$MIRROR_URL" | awk -F/ '{print $3}')
+          if [ -n "$MIRROR_HOST" ]; then
+            ssh-keyscan -H "$MIRROR_HOST" >> ~/.ssh/known_hosts
+          else
+            echo "::error::Mirror URL is invalid"
+            exit 1
+          fi
+      
+      - name: Mirror Repository
+        uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: ${{ env.MIRROR_URL }}
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
