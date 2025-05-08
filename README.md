@@ -36,3 +36,11 @@ If either condition is met, none of the jobs will be executed.
    Pushes changes to a mirror repository, using the secret `GIT_SSH_PRIVATE_KEY` for SSH authentication.
 
 ### 🛠️ Environment Variables
+
+The workflow relies on the following environment variables:
+
+- **`EXECUTABLES`**: A space-separated list of expected executables to validate after compilation.
+- **`MIRROR_URL`**: The SSH URL of the mirror repository (used during secure push).
+- **`GIT_SSH_PRIVATE_KEY`** *(secret)*: The private SSH key used to authenticate the push to the mirror.
+
+Make sure these variables are correctly defined either in the workflow file or as GitHub repository secrets.
