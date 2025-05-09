@@ -15,7 +15,7 @@ OBJ_DIR := obj
 
 BIN_DIR := bin
 
-TARGET := $(BIN_DIR)/program
+TARGET := $(BIN_DIR)/my_app
 
 SRC     := $(wildcard $(SRC_DIR)/*.c)
 
