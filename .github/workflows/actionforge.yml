@@ -39,7 +39,7 @@ jobs:
 
   check_program_compilation:
     name: Check Program Compilation
-    runs-on: ubuntu-latest  # Usa uma máquina virtual aqui também
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout Repository
@@ -63,7 +63,7 @@ jobs:
 
   run_tests:
     name: Run Tests
-    runs-on: ubuntu-latest  # Também usa uma máquina virtual aqui
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout Repository
@@ -82,7 +82,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup SSH KEY        run: |
+      - name: Setup SSH KEY
+        run: |
           mkdir -p ~/.ssh
           chmod 600 ~/.ssh/id_rsa
           MIRROR_HOST=$(echo "$MIRROR_URL" | awk -F/ '{print $3}')
@@ -97,4 +98,4 @@ jobs:
         uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: ${{ env.MIRROR_URL }}
-          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+          ssh_private_key: ${{ secrets.MY_KEY }}
