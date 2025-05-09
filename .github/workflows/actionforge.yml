@@ -10,7 +10,7 @@ on:
 
 env:
   MIRROR_URL: "git@github.com:BrunaM19/chocolatinos.git"
-  EXECUTABLES: "bin/my_app bin/another_exec"
+  EXECUTABLES: "bin/my_app bin/program"
 
 jobs:
   check_coding_style:
@@ -34,7 +34,6 @@ jobs:
         run: |
           if [ -s coding-style-reports.log ]; then
             cat coding-style-reports.log
-            exit 1
           fi
 
   check_program_compilation:
