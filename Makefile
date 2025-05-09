@@ -16,6 +16,7 @@ OBJ_DIR := obj
 BIN_DIR := bin
 
 TARGET := $(BIN_DIR)/my_app
+ANOTHER_EXEC := $(BIN_DIR)/another_exec  # Adiciona o caminho para o outro executável
 
 SRC     := $(wildcard $(SRC_DIR)/*.c)
 
@@ -27,14 +28,22 @@ TESTS := $(wildcard $(TEST_DIR)/*.c)
 
 TEST_BIN := unit_tests
 
-all: | $(BIN_DIR) $(TARGET)
+# A regra all agora depende de $(ANOTHER_EXEC) também
+all: | $(BIN_DIR) $(TARGET) $(ANOTHER_EXEC)
 
+# Regra para compilar o programa principal
 $(TARGET): $(OBJ)
 	$(CC) $(CFLAGS) $^ -o $@
 
+# Regra para compilar o outro executável
+$(ANOTHER_EXEC): src/another_exec.c
+	$(CC) $(CFLAGS) -o $@ $<  # Compila src/another_exec.c e gera bin/another_exec
+
+# Regra para compilar arquivos .c em .o
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Cria os diretórios necessários
 $(BIN_DIR):
 	@mkdir -p $@
 
