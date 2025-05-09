@@ -14,6 +14,6 @@ int main(void)
 {
     char *str = "The program is working!";
 
-    write(1, &str, sizeof(str));
+    printf("%s\n", str);
     return 0;
 }

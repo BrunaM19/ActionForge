@@ -50,8 +50,7 @@ fclean: clean
 re: fclean all
 
 tests_run: $(TESTS)
-	$(CC) $(CFLAGS) $(TESTS) $(SRC) -Iinclude -lcriterion
-		--coverage -o $(TEST_BIN)
+	$(CC) $(CFLAGS) $(TESTS) $(SRC) --coverage -o $(TEST_BIN)
 	./$(TEST_BIN)
 
 .PHONY: clean fclean re all tests_run
