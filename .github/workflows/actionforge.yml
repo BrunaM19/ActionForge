@@ -10,7 +10,7 @@ on:
 
 env:
   MIRROR_URL: "git@github.com:BrunaM19/chocolatinos.git"
-  EXECUTABLES: "bin/my_app bin/another_exec"
+  EXECUTABLES: "bin/my_app bin/program"
 
 jobs:
   check_coding_style:
